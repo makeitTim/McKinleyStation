@@ -1,0 +1,82 @@
+/*
+ *   framework.css
+ *   Created Jan. 26, 2018 by Tim
+ *
+ *   .    .  __  . . . .   . .    __ .  .    ________ . _____ .  __  .  .
+ *   |\  /| /    |/  | | \ | |   /__ \__|   (__   |  /_\  |   | /  \ |\ |
+ *   | \/ | \__  | \ | |  \| |__ \__  __/   ___\  | /   \ |   | \__/ | \|
+ *   
+ *   The basic styling, normalization, grid system, form styles, etc.
+ *   This app will not be responsive for mobile screens, so we won't use
+ *   those media queries. (however, will design more or less fit iPad size)
+ */
+
+
+/* ______________________________________________________________________
+ * Base
+ */
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:after,
+*:before {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  background-color: #d3d0c6;
+  color: #424242;
+  font-family: 'Roboto Slab', serif;
+  font-size: 16px;
+}
+
+
+/* ______________________________________________________________________
+ * Typography
+ */
+
+b,
+strong {
+  font-weight: 700;
+}
+
+
+/* ______________________________________________________________________
+ * Form & Buttons
+ */
+
+input, textarea, select {
+  font-family: 'Roboto Slab', serif;
+  font-size: 14px;
+  background-color: #fff;
+  border: 1px solid #666;
+  border-radius: 0;
+  outline: 0 none;
+  padding: 4px 6px;
+}
+
+input:focus, textarea:focus {
+  border: 1px solid #C15968;
+}
+
+.button,
+button {
+  font-family: 'Roboto Slab', serif;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  background: #C15968;
+  padding: 4px 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover,
+button:hover {
+  background: #a1384b;
+  text-decoration: none;
+}

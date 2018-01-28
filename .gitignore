@@ -1,0 +1,10 @@
+
+# OS generated
+.DS_Store
+ehthumbs.db
+Thumbs.db
+
+# Not using npm, but just incase
+node_modules/
+dist/
+npm-debug.log

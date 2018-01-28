@@ -1,0 +1,88 @@
+/*
+ *   layour.css
+ *   Created Jan. 27, 2018 by Tim
+ *
+ *   .    .  __  . . . .   . .    __ .  .    ________ . _____ .  __  .  .
+ *   |\  /| /    |/  | | \ | |   /__ \__|   (__   |  /_\  |   | /  \ |\ |
+ *   | \/ | \__  | \ | |  \| |__ \__  __/   ___\  | /   \ |   | \__/ | \|
+ *   
+ *   Style controlling the overall interface flex layout.
+ */
+
+.wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  min-width: 768px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  width: 100%;
+  min-height: 64px;
+}
+
+header>div {
+  padding: 0;
+  margin-left: 8%;
+  width: 92%;
+  overflow: hidden;
+  padding: 12px 0 4px;
+  align-self: flex-end;
+}
+
+h1 {
+  font-family: 'Verb';
+  font-weight: normal;
+  font-size: 56px;
+  line-height: 56px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: #666666;
+  margin: 0;
+}
+
+h1:after {
+  background-color: #C15968;
+  content: "";
+  display: inline-block;
+  height: 40px;
+  margin-left: -4px;
+  width: 100%;
+  margin-right: -90%;
+}
+
+.app-wrapper {
+  flex: 1;
+  width: 1024px;
+  display: flex;
+  flex-direction: row;
+}
+
+.image-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+canvas {
+  align-self: flex-start;
+}
+
+.image-controls {
+  flex: 1;
+  padding: 4px 0;
+}
+
+.panel {
+  flex: 1;
+  margin: 0 6px 6px;
+  padding: 0 8px;
+  background-color: #ebe8de;
+  border: 1px solid #a19d8f;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

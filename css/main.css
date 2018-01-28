@@ -1,0 +1,103 @@
+/*
+ *   main.css
+ *   Created Jan. 25, 2018 by Tim
+ *
+ *   .    .  __  . . . .   . .    __ .  .    ________ . _____ .  __  .  .
+ *   |\  /| /    |/  | | \ | |   /__ \__|   (__   |  /_\  |   | /  \ |\ |
+ *   | \/ | \__  | \ | |  \| |__ \__  __/   ___\  | /   \ |   | \__/ | \|
+ *   
+ *   Style specific to functionality and user experience.
+ */
+
+canvas {
+  background: #fff;
+}
+
+
+/* ______________________________________________________________________
+ * Fields
+ */
+
+.field {
+  width: 100%;
+  margin-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #a19d8f;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.field > label  {
+  min-width: 120px;
+  min-height: 24px;
+}
+
+.field > input[type=text],
+.field > select {
+  flex: 1;
+  margin-left: 8px;
+}
+.field button.close {
+  margin-left: 8px;
+  font-size: 22px;
+  padding: 0 9px;
+}
+
+.field-column {
+  flex-direction: column;
+}
+.field-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+.field-row > label {
+  flex: 1;
+}
+
+.field textarea {
+  width: 100%;
+  resize: vertical;
+}
+
+.test {
+  padding: 10px;
+  border: 1px solid #bbb;
+  background-color: #777;
+  color: #fff;
+}
+
+.test.one {
+  background-color: red;
+}
+
+.test.two {
+  background-color: green;
+}
+
+.test.three {
+  background-color: blue;
+}
+
+
+/* ______________________________________________________________________
+ * Vue Transitions
+ */
+
+.v-enter-active,
+.v-leave-active {
+  /* transition: opacity 0.2s ease-out; */
+  transition: all 1.2s ease-out;
+  max-height: 500px;
+}
+
+.v-enter,
+.v-leave-to {
+  opacity: 0;
+  max-height: 0px;
+}

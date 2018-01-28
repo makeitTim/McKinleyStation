@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>McKinley Station</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,700" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" media="screen" href="fonts/stylesheet.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="css/framework.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="css/layout.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <header>
+      <div>
+        <h1 style="color:#666;">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px"
+            height="40px" viewBox="0 0 100 40" style="overflow:visible;">
+            <path style="fill:#C15968;" d="M56,12.3C54.9,17.6,71.7,32,80.7, 40H100V0H70.8C64.3,3, 56.7,8.5, 56,12.3z" />
+            <path style="fill:#666;" d="M0,19.5C0,19.5,15.1,9,32.2,3.8c20-6.2,40.9-8.8,40.9-8.8S50.3,5.4,49,12
+            c-1.4,7.3,30.4,32.4,30.4,32.4s-27.3-1.6-48.6-9.1C7.3,27.1,0,19.5,0,19.5z" />
+          </svg>
+          McKinley Station
+        </h1>
+      </div>
+    </header>
+
+    <!-- App -->
+    <div id="app" class="app-wrapper">
+
+      <!-- Image -->
+      <div class="image-wrapper">
+        <canvas id="#canvas" v-insert-message="exampleContent"></canvas>
+
+        <!-- Controls -->
+        <div class="image-controls" id="controls">
+          <p>
+            Select Photo
+            <br/>
+            <input type="file" @change="input($event)" />
+          </p>
+          <a href="#" class="button" @click="save($event)">Save Image...</a>
+        </div>
+        <!-- /Controls -->
+
+      </div>
+      <!-- /Image -->
+
+      <!-- Panel -->
+      <div class="panel">
+
+        <div class="field">
+          <label>Card Title</label>
+          <input type="text" v-model="exampleContent" />
+          <button class="close">&times;</button>
+        </div>
+
+        <div class="field">
+          <label>Card Type</label>
+          <select>
+            <option value="volvo">Volvo</option>
+            <option value="saab">Saab</option>
+            <option value="mercedes">Mercedes</option>
+            <option value="audi">Audi</option>
+          </select>
+          <button class="close">&times;</button>
+        </div>
+
+        <div class="field field-column">
+          <div class="field-row">
+            <label>Lore</label>
+            <button class="close">&times;</button>
+          </div>
+          <textarea rows="4"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Card Title</label>
+          <input type="text" v-model="exampleContent" />
+          <button class="close">&times;</button>
+        </div>
+        <div class="field">
+          <label>Card Title</label>
+          <input type="text" v-model="exampleContent" />
+          <button class="close">&times;</button>
+        </div>
+        <div class="field">
+          <label>Card Title</label>
+          <input type="text" v-model="exampleContent" />
+        </div>
+        <field-smart ftype="SELECT" x="true"></field-smart>
+        <field-smart ftype="TEXT" x="false"></field-smart>
+        <field-smart ftype="TEXTAREA" x="true"></field-smart>
+
+        <div>
+          <br/>
+
+          <div style="height:100px">
+            <transition>
+              <div class="test one" v-if="count === 1">1</div>
+            </transition>
+            <transition>
+              <div class="test two" v-if="count === 2">2</div>
+            </transition>
+            <transition>
+              <div class="test three" v-if="count === 3">3</div>
+            </transition>
+          </div>
+
+          <p>{{ count }}</p>
+          <p>
+            <button @click="increment">+</button>
+            <button @click="decrement">-</button>
+          </p>
+
+          <label>text spacing:
+            <input type="range" min="-20" max="40" value="1" step="0.1" v-model="spacing">
+          </label>
+        </div>
+
+      </div>
+      <!-- /Panel -->
+
+    </div>
+    <!-- /App -->
+
+  </div>
+  <!-- /wrapper -->
+
+
+  <!--<script src="js/vendor/vue.min.js"></script>-->
+  <script src="js/vendor/vue.js"></script>
+  <script src="js/vendor/vuex.js"></script>
+
+  <script src="js/settings.js"></script>
+  <script src="js/fields.js"></script>
+  <script src="js/text.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+
+</html>
