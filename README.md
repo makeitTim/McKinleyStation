@@ -2,6 +2,7 @@
 
 # McKinley Station
 
-## Star Trek CCG First Edition
-## Card Maker
+Work in progress
+
+Live: [McKinley Station](https://makeittim.github.io/McKinleyStation/)
 
