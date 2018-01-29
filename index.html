@@ -40,7 +40,7 @@
         <!-- Controls -->
         <div class="image-controls" id="controls">
           <p>
-            Select Photo
+            Select Art
             <br/>
             <input type="file" @change="input($event)" />
           </p>
@@ -54,46 +54,17 @@
       <!-- Panel -->
       <div class="panel">
 
-        <div class="field">
-          <label>Test</label>
-          <input type="text" v-model="exampleContent" />
-          <button class="close">&times;</button>
-        </div>
+        <field-smart v-for="v in fields('all')" :key="v" :index="v" :x="false" v-model="card">
+        </field-smart>
 
-        <field-smart v-for="v in fields('all')" :key="v" :index="v" :x="false"></field-smart>
+        <field-smart v-for="v in fields('artifact')" :key="v" :index="v" :x="false" v-model="card">
+        </field-smart>
 
-        <field-smart v-for="v in fields('artifact')" :key="v" :index="v" :x="false"></field-smart>
+        <field-smart v-for="v in optionals('artifact')" :key="v" :index="v" :x="true" v-model="card">
+        </field-smart>
 
-        <field-smart v-for="v in optionals('artifact')" :key="v" :index="v" :x="true"></field-smart>
-
-        <field-smart v-for="v in optionals('all')" :key="v" :index="v" :x="true"></field-smart>
-
-
-        <div>
-          <br/>
-
-          <div style="height:100px">
-            <transition>
-              <div class="test one" v-if="count === 1">1</div>
-            </transition>
-            <transition>
-              <div class="test two" v-if="count === 2">2</div>
-            </transition>
-            <transition>
-              <div class="test three" v-if="count === 3">3</div>
-            </transition>
-          </div>
-
-          <p>{{ count }}</p>
-          <p>
-            <button @click="increment">+</button>
-            <button @click="decrement">-</button>
-          </p>
-
-          <label>text spacing:
-            <input type="range" min="-20" max="40" value="1" step="0.1" v-model="spacing">
-          </label>
-        </div>
+        <field-smart v-for="v in optionals('all')" :key="v" :index="v" :x="true" v-model="card">
+        </field-smart>
 
       </div>
       <!-- /Panel -->
@@ -105,10 +76,13 @@
   <!-- /wrapper -->
 
 
+  <!-- Vue Production -->
   <!--<script src="js/vendor/vue.min.js"></script>-->
+  
+  <!-- Vue Dev -->
   <script src="js/vendor/vue.js"></script>
-  <script src="js/vendor/vuex.js"></script>
 
+  <!-- App functionality -->
   <script src="js/settings.js"></script>
   <script src="js/fields.js"></script>
   <script src="js/text.js"></script>

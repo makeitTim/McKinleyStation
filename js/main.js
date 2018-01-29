@@ -10,65 +10,52 @@
  */
 
 // ______________________________________________________________________
-// Vuex
-
-const store = new Vuex.Store({
-  state: {
-    count: 0,
-    template: 0,
-    image: 0,
-    text: 0
-  },
-  mutations: {
-    increment: state => state.count++,
-    decrement: state => state.count--
-  }
-})
-
-
-// ______________________________________________________________________
 // COMPONENTS
 
 /// Field containing basic text input
-var FieldText = Vue.component('field-text', {
-  props: ['field', 'x'], // <input type="text" v-model="value" />
+Vue.component('field-text', {
+  props: ['field', 'x', 'value'],
   template: `
     <div class="field">
       <label>{{ field.label }}</label>
-      <input type="text" />
+      <input type="text" :value="value" v-on:input="$emit('input', $event.target.value)" />
       <button v-if="x" class="close">&times;</button>
-    </div>`
+    </div>
+  `
 })
 
 /// Field containing larger text area
 Vue.component('field-textarea', {
-  props: ['field', 'x'], // <textarea rows="4" v-model="value"></textarea>
+  props: ['field', 'x', 'value'],
   template: `
     <div class="field field-column">
       <div class="field-row">
         <label>{{ field.label }}</label>
         <button v-if="x" class="close">&times;</button>
       </div>
-      <textarea rows="4"></textarea>
-    </div>`
+      <textarea rows="4" :value="value" v-on:input="$emit('input', $event.target.value)">
+      </textarea>
+    </div>
+  `
 })
 
 /// Field containing dropdown select
 Vue.component('field-select', {
-  props: ['field', 'x'], // <select v-model="value">
+  props: ['field', 'x', 'value'],
   template: `
     <div class="field">
-    <label>{{ field.label }}</label>
-    <select>
-      <option v-for="(v, k) in field.options" :value="k"> {{v}} </option>
-    </select>
-    <button v-if="x" class="close">&times;</button>
-  </div>`
+      <label>{{ field.label }}</label>
+      <select :value="value" v-on:input="$emit('input', $event.target.value)">
+        <option v-for="(v, k) in field.options" :value="k"> {{v}} </option>
+      </select>
+      <button v-if="x" class="close">&times;</button>
+    </div>
+  `
 })
 
-/// Smart field wrapper. Displays correct field type.
+/// Smart field wrapper. Displays correct field panel.
 Vue.component('field-smart', {
-  props: ['index', 'x'],
+  props: ['index', 'x', 'value'],
   computed: {
     field() {
       var fieldDef = fields[this.index];
@@ -78,54 +65,22 @@ Vue.component('field-smart', {
   },
   template: `
     <transition>
-      <field-text v-if="field.panel === 'TEXT'" :field="field" :x="x">
+      <field-text v-if="field.panel === 'TEXT'" :field="field" :x="x" v-model="value[index]">
       </field-text>
-      <field-textarea v-if="field.panel === 'TEXTAREA'" :field="field" :x="x">
+      <field-textarea v-if="field.panel === 'TEXTAREA'" :field="field" :x="x" v-model="value[index]">
       </field-textarea>
-      <field-select v-if="field.panel === 'SELECT'" :field="field" :x="x">
+      <field-select v-if="field.panel === 'SELECT'" :field="field" :x="x" v-model="value[index]">
       </field-select>
     </transition>
   `
 })
 
 
-
-// Extend Vue to get a reusable constructor
-var MyComponent = Vue.extend({
-  methods: {
-    inputFor(item) {
-      return item === store.state.count
-    }
-  },
-  template: `
-    <div>
-    <transition>
-      <div class="test one" v-if="inputFor(1)">1</div>
-    </transition><transition>
-      <div class="test two" v-if="inputFor(2)">2</div>
-    </transition><transition>
-      <div class="test three" v-if="inputFor(3)">3</div>
-    </transition>
-
-    </div>
-  `
-})
-// Register the constructor with id: my-component
-Vue.component('my-component', MyComponent)
-
 // ______________________________________________________________________
 // VUE APP
 
 var app = new Vue({
   el: '#app',
-  computed: {
-    count() {
-      return store.state.count
-    },
-    card() {
-      return { name : "Name Test" }
-    }
-  },
   methods: {
     fields(type) {
       return fieldList[type]
@@ -133,35 +88,25 @@ var app = new Vue({
     optionals(type) {
       return fieldListOptional[type]
     },
-    increment() {
-      store.commit('increment')
-    },
-    decrement() {
-      store.commit('decrement')
-    },
     input(event) {
-      inputPhoto(event.target);
+      inputArt(event.target);
     },
     save(event) {
       saveCanvas(event.target, "test");
     }
   },
-
-
   data: {
-    "exampleContent": "This is TEXT",
-    "spacing": 0,
-    // "card": { name : "Name Test" }
+    "card": {}
   },
   directives: {
-    drawCard: function(canvasElement, binding) {
+    drawCard: function (canvasElement, binding) {
       redraw(canvasElement, binding.value);
     }
   },
-  watch: {
-    exampleContent: function() {
-      console.log("exampleContent changed to " + this.exampleContent);
-    }
-  }
+  //watch: {
+  //  card: function () {
+  //    console.log("Card data changed");
+  //  }
+  //}
 
 })

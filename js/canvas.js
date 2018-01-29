@@ -34,7 +34,7 @@ var sources = {
   bg: "templates/bb.png",
   bgNeutral: "templates/bg_neutral.png",
   border: "templates/border.png",
-  photoBorder: "templates/border_photo.png",
+  artBorder: "templates/border_art.png",
   verbTitle: "templates/title_verb.png",
   verbText: "templates/text_verb.png"
 };
@@ -75,9 +75,6 @@ function redraw(canvas, card) {
     return;
   }
 
-  var string = card["name"];  
-  if (string === null) { string = "Was null"; }
-
   let can = canvas;
   let ctx = canvas.getContext('2d');
 
@@ -85,11 +82,11 @@ function redraw(canvas, card) {
 
   //
   //fillTemplate(ctx)
-  drawPhoto(ctx);
+  drawArt(ctx);
   drawFull(ctx, images.bg);
   drawTemplate(ctx, images.bgNeutral);
   drawTemplate(ctx, images.border);
-  drawTemplate(ctx, images.photoBorder);
+  drawTemplate(ctx, images.artBorder);
   drawTemplate(ctx, images.verbTitle);
   drawTemplate(ctx, images.verbText);
   //
@@ -97,6 +94,22 @@ function redraw(canvas, card) {
 
   ctx.fillStyle = "black";
 
+  // loop through card data using index/property
+  // which we use to determine the field
+  for (var prop in card) {
+    if (card.hasOwnProperty(prop)) {
+
+      if (prop === "name") {
+        textLine(ctx, card[prop], unit(1.2), unit(2.24),
+          kFontVerbTitle, 'center');
+        continue;
+      }
+
+      drawField(ctx, fields[prop], card[prop])
+    }
+  }
+
+  /*
   textLine(ctx, string, unit(1.2), unit(2.24),
     kFontVerbTitle, 'center');
 
@@ -105,11 +118,44 @@ function redraw(canvas, card) {
 
   textFormatted(ctx, string, unit(0.39), unit(2.95), unit(1.75),
     kFontGametextLineHeight, kFontGametext);
+  */
+
+}
+
+
+
+/**
+ * Draws image over entire canvas
+ * @param ctx     Current context to draw with.
+ * @param field   The field definition being drawn.
+ * @param value   The value this card has, ie. text or image.
+ */
+function drawField(ctx, field, value) {
+
+  var font = field.font;
+  if (font === null) { font = kFontGametext; }
+
+  var align = field.align;
+  if (align === null) { align = 'left'; }
+
+  if (field.w === null) {
+    // no .w means just text
+    textLine(ctx, value, unit(field.x), unit(field.y), font, align);
+
+  } else {
+    // has .w means it's a multiline formatted field.
+    var lineHeight = field.line;
+    if (lineHeight === null) { lineHeight = kFontGametextLineHeight; }
+
+    textFormatted(ctx, value, unit(field.x), unit(field.y),
+      unit(field.w), lineHeight, font, align);
+
+  }
 
 }
 
 /* ______________________________________________________________________
- * Drawing Helpers
+ * Image Drawing Helpers
  */
 
 /**
@@ -141,36 +187,33 @@ function fillTemplate(ctx) {
 }
 
 /* ______________________________________________________________________
- * Photo
+ * Art
  */
-var photoImage = null;
-var photoX = 0, photoY = 0, photoW = 0, photoH = 0;
-function drawPhoto(context) {
-  if (photoImage == null) { return; }
+var artImage = null;
+var artX = 0, artY = 0, artW = 0, artH = 0;
+function drawArt(context) {
+  if (artImage == null) { return; }
   // TODO: aspect ratio and center ahead of time.
-  context.drawImage(photoImage, photoX, photoY, photoW, photoH);
+  context.drawImage(artImage, artX, artY, artW, artH);
 }
-function inputPhoto(input) {
+function inputArt(input) {
   var reader = new FileReader();
   reader.onload = function (e) {
-    photoImage = new Image();
-    photoImage.src = reader.result;
+    artImage = new Image();
+    artImage.src = reader.result;
 
     // need to wait for image to load as well
-    photoImage.onload = function (e) {
-      sizePhoto();
-
-      console.log("redraw from photo...");
-      redraw(document.querySelector('canvas'), "photo");
+    artImage.onload = function (e) {
+      sizeArt();
     }
 
   }
   reader.readAsDataURL(input.files[0]);
 }
 
-function sizePhoto() {
+function sizeArt() {
   // calculate placement, for now just fit with aspect ratio.
-  // TODO: more advanced photo placement options, missions, etc.
+  // TODO: more advanced art placement options, missions, etc.
   var frameX = unit(0.35);
   var frameY = unit(0.68);
   var frameW = unit(1.8);
@@ -180,30 +223,30 @@ function sizePhoto() {
   // 49, 96, 254, 183
 
   var frameRatio = frameW / frameH;
-  var photoRatio = photoImage.width / photoImage.height;
+  var artRatio = artImage.width / artImage.height;
 
-  //console.log("PHOTO Src: " + photoImage.width + ", " + photoImage.height);
-  //console.log("frameRatio: " + frameRatio + "   photoRatio: " + photoRatio);
+  //console.log("PHOTO Src: " + artImage.width + ", " + artImage.height);
+  //console.log("frameRatio: " + frameRatio + "   artRatio: " + artRatio);
 
-  if (photoRatio > frameRatio) {
-    // photo image is wider
-    photoY = frameY;
-    photoH = frameH;
-    photoW = frameH * photoRatio;
-    photoX = frameX - ((photoW - frameW) * 0.5);
+  if (artRatio > frameRatio) {
+    // art image is wider
+    artY = frameY;
+    artH = frameH;
+    artW = frameH * artRatio;
+    artX = frameX - ((artW - frameW) * 0.5);
 
-  } else if (photoRatio < frameRatio) {
-    // photo image is taller
-    photoX = frameX;
-    photoW = frameW;
-    photoH = frameW * (photoImage.height / photoImage.width);
-    photoY = frameY - ((photoH - frameH) * 0.5);
+  } else if (artRatio < frameRatio) {
+    // art image is taller
+    artX = frameX;
+    artW = frameW;
+    artH = frameW * (artImage.height / artImage.width);
+    artY = frameY - ((artH - frameH) * 0.5);
 
   } else { // correct ratio unlikely, just for reference
-    photoX = frameX;
-    photoY = frameY;
-    photoW = frameW;
-    photoH = frameH;
+    artX = frameX;
+    artY = frameY;
+    artW = frameW;
+    artH = frameH;
   }
 }
 
