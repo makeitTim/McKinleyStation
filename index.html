@@ -55,47 +55,19 @@
       <div class="panel">
 
         <div class="field">
-          <label>Card Title</label>
+          <label>Test</label>
           <input type="text" v-model="exampleContent" />
           <button class="close">&times;</button>
         </div>
 
-        <div class="field">
-          <label>Card Type</label>
-          <select>
-            <option value="volvo">Volvo</option>
-            <option value="saab">Saab</option>
-            <option value="mercedes">Mercedes</option>
-            <option value="audi">Audi</option>
-          </select>
-          <button class="close">&times;</button>
-        </div>
+        <field-smart v-for="v in fields('all')" :key="v" :index="v" :x="false"></field-smart>
 
-        <div class="field field-column">
-          <div class="field-row">
-            <label>Lore</label>
-            <button class="close">&times;</button>
-          </div>
-          <textarea rows="4"></textarea>
-        </div>
+        <field-smart v-for="v in fields('artifact')" :key="v" :index="v" :x="false"></field-smart>
 
-        <div class="field">
-          <label>Card Title</label>
-          <input type="text" v-model="exampleContent" />
-          <button class="close">&times;</button>
-        </div>
-        <div class="field">
-          <label>Card Title</label>
-          <input type="text" v-model="exampleContent" />
-          <button class="close">&times;</button>
-        </div>
-        <div class="field">
-          <label>Card Title</label>
-          <input type="text" v-model="exampleContent" />
-        </div>
-        <field-smart ftype="SELECT" x="true"></field-smart>
-        <field-smart ftype="TEXT" x="false"></field-smart>
-        <field-smart ftype="TEXTAREA" x="true"></field-smart>
+        <field-smart v-for="v in optionals('artifact')" :key="v" :index="v" :x="true"></field-smart>
+
+        <field-smart v-for="v in optionals('all')" :key="v" :index="v" :x="true"></field-smart>
+
 
         <div>
           <br/>

@@ -30,11 +30,11 @@ const store = new Vuex.Store({
 
 /// Field containing basic text input
 var FieldText = Vue.extend({
-  props: ['label', 'value', 'x'],
+  props: ['field', 'x'], // <input type="text" v-model="value" />
   template: `
     <div class="field">
-      <label>{{ label }}</label>
-      <input type="text" v-model="value" />
+      <label>{{ field.label }}</label>
+      <input type="text" />
       <button v-if="x" class="close">&times;</button>
     </div>`
 })
@@ -42,26 +42,26 @@ Vue.component('field-text', FieldText)
 
 /// Field containing larger text area
 var FieldTextArea = Vue.extend({
-  props: ['label', 'value', 'x'],
+  props: ['field', 'x'], // <textarea rows="4" v-model="value"></textarea>
   template: `
     <div class="field field-column">
       <div class="field-row">
-        <label>{{ label }}</label>
+        <label>{{ field.label }}</label>
         <button v-if="x" class="close">&times;</button>
       </div>
-      <textarea rows="4" v-model="value"></textarea>
+      <textarea rows="4"></textarea>
     </div>`
 })
 Vue.component('field-textarea', FieldTextArea)
 
 /// Field containing dropdown select
 var FieldSelect = Vue.extend({
-  props: ['label', 'value', 'options', 'x'],
+  props: ['field', 'x'], // <select v-model="value">
   template: `
     <div class="field">
-    <label>{{ label }}</label>
-    <select v-model="value">
-      <option v-for="(v, k) in options" :value="k"> {{v}} </option>
+    <label>{{ field.label }}</label>
+    <select>
+      <option v-for="(v, k) in field.options" :value="k"> {{v}} </option>
     </select>
     <button v-if="x" class="close">&times;</button>
   </div>`
@@ -70,12 +70,22 @@ Vue.component('field-select', FieldSelect)
 
 /// Smart field wrapper. Displays correct field type.
 var FieldSmart = Vue.extend({
-  props: ['ftype', 'label', 'value', 'x'],
+  props: ['index', 'x'],
+  computed: {
+    field() {
+      var fieldDef = fields[this.index];
+      if (fieldDef === null) { fieldDef = createDefaultField(this.index); }
+      return fieldDef;
+    }
+  },
   template: `
     <transition>
-      <field-text v-if="ftype === 'TEXT'" x="x"></field-text>
-      <field-textarea v-if="ftype === 'TEXTAREA'" x="x"></field-textarea>
-      <field-select v-if="ftype === 'SELECT'" x="x"></field-select>
+      <field-text v-if="field.panel === 'TEXT'" :field="field" :x="x">
+      </field-text>
+      <field-textarea v-if="field.panel === 'TEXTAREA'" :field="field" :x="x">
+      </field-textarea>
+      <field-select v-if="field.panel === 'SELECT'" :field="field" :x="x">
+      </field-select>
     </transition>
   `
 })
@@ -116,6 +126,12 @@ var app = new Vue({
     }
   },
   methods: {
+    fields(type) {
+      return fieldList[type]
+    },
+    optionals(type) {
+      return fieldListOptional[type]
+    },
     increment() {
       store.commit('increment')
     },

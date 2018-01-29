@@ -53,4 +53,7 @@ const kFontLoreLineHeight = fontPx(8);
 const kFontGametext = fontPx(7) + 'px Gametext';
 const kFontGametextLineHeight = fontPx(8);
 
+const kFontSkills = fontPx(7) + 'px Skills';
+const kFontSkillsLineHeight = fontPx(8);
+
 const kFontInfo = fontPx(4.5) + 'px Gametext';
