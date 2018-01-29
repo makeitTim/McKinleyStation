@@ -25,11 +25,12 @@ const store = new Vuex.Store({
   }
 })
 
+
 // ______________________________________________________________________
 // COMPONENTS
 
 /// Field containing basic text input
-var FieldText = Vue.extend({
+var FieldText = Vue.component('field-text', {
   props: ['field', 'x'], // <input type="text" v-model="value" />
   template: `
     <div class="field">
@@ -38,10 +39,9 @@ var FieldText = Vue.extend({
       <button v-if="x" class="close">&times;</button>
     </div>`
 })
-Vue.component('field-text', FieldText)
 
 /// Field containing larger text area
-var FieldTextArea = Vue.extend({
+Vue.component('field-textarea', {
   props: ['field', 'x'], // <textarea rows="4" v-model="value"></textarea>
   template: `
     <div class="field field-column">
@@ -52,10 +52,9 @@ var FieldTextArea = Vue.extend({
       <textarea rows="4"></textarea>
     </div>`
 })
-Vue.component('field-textarea', FieldTextArea)
 
 /// Field containing dropdown select
-var FieldSelect = Vue.extend({
+Vue.component('field-select', {
   props: ['field', 'x'], // <select v-model="value">
   template: `
     <div class="field">
@@ -66,10 +65,9 @@ var FieldSelect = Vue.extend({
     <button v-if="x" class="close">&times;</button>
   </div>`
 })
-Vue.component('field-select', FieldSelect)
 
 /// Smart field wrapper. Displays correct field type.
-var FieldSmart = Vue.extend({
+Vue.component('field-smart', {
   props: ['index', 'x'],
   computed: {
     field() {
@@ -89,7 +87,7 @@ var FieldSmart = Vue.extend({
     </transition>
   `
 })
-Vue.component('field-smart', FieldSmart)
+
 
 
 // Extend Vue to get a reusable constructor
@@ -123,6 +121,9 @@ var app = new Vue({
   computed: {
     count() {
       return store.state.count
+    },
+    card() {
+      return { name : "Name Test" }
     }
   },
   methods: {
@@ -149,11 +150,12 @@ var app = new Vue({
 
   data: {
     "exampleContent": "This is TEXT",
-    "spacing": 0
+    "spacing": 0,
+    // "card": { name : "Name Test" }
   },
   directives: {
-    insertMessage: function(canvasElement, binding) {
-      redraw(canvasElement, binding.value, 1);
+    drawCard: function(canvasElement, binding) {
+      redraw(canvasElement, binding.value);
     }
   },
   watch: {

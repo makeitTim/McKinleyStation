@@ -69,11 +69,14 @@ loadImages(sources);
  * Redraw convas method
  */
 
-function redraw(canvas, string) {
+function redraw(canvas, card) {
   if (canvas == null) {
     console.log("CANVAS NULL");
     return;
   }
+
+  var string = card["name"];  
+  if (string === null) { string = "Was null"; }
 
   let can = canvas;
   let ctx = canvas.getContext('2d');
