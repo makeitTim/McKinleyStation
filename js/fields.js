@@ -80,8 +80,9 @@ var fields = [];
 fields['type'] = {
   label: 'Card Type',
   panel: 'SELECT',
-  options: [ 'artifact', 'dilemma', 'doorway', 'equipment', 'event', 'incident',
-            'interrupt', 'objective', 'personnel' ],
+  options: [ 'artifact', 'dilemma_both', 'dilemma_planet', 'dilemma_space',
+            'doorway', 'equipment', 'event', 'incident',
+            'interrupt', 'objective' ],
   default: 'artifact'
 };
 
@@ -124,13 +125,13 @@ fields['lore'] = {
   label: 'Lore',
   panel: 'TEXTAREA',
   font: kFontLore, line: kFontLoreLineHeight,
-  x: 0.37, y: 2.4, w: 1.8
+  x: 0.41, y: 2.4, w: 1.73
 }
 fields['gametext'] = {
   label: 'Gametext',
   panel: 'TEXTAREA',
   font: kFontGametext, line: kFontGametextLineHeight,
-  x: 0.39, y: 2.95, w: 1.75
+  x: 0.41, y: 2.95, w: 1.73
 }
 fields['skills'] = {
   label: 'Skills',

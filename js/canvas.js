@@ -31,12 +31,12 @@ controls.style.width = kCanvasWidth + 'px';
 
 var images = {};
 var sources = {
-  bg: "templates/bb.png",
-  bgNeutral: "templates/bg_neutral.png",
-  border: "templates/border.png",
-  artBorder: "templates/border_art.png",
-  verbTitle: "templates/title_verb.png",
-  verbText: "templates/text_verb.png"
+  bg: 'templates/bb.png',
+  bgNeutral: 'templates/bg_neutral.png',
+  border: 'templates/border.png',
+  artBorder: 'templates/border_art.png',
+  verbTitle: 'templates/title_verb.png',
+  verbText: 'templates/text_verb.png'
 };
 function loadImages(sources) {  // , callback) {
   var loadedImages = 0;
@@ -54,8 +54,8 @@ function loadImages(sources) {  // , callback) {
       }
     };
 
-    // fixed "tainted" error when saving, but moced CORS issue to here.
-    //images[src].crossOrigin = "Anonymous";
+    // fixed 'tainted' error when saving, but moced CORS issue to here.
+    //images[src].crossOrigin = 'Anonymous';
 
     images[src].src = kImagePath + sources[src];
   }
@@ -69,9 +69,36 @@ loadImages(sources);
  * Redraw convas method
  */
 
+ // http://fragged.org/preloading-images-using-javascript-the-right-way-and-without-frameworks_744.html
+
 function redraw(canvas, card) {
+  if (card === null) {
+    return;
+  }
+
+  if (card['type'] === null) {
+    draw(canvas, card);
+    return;
+  }
+  // TODO: multiple image caching system
+  // preload...
+  images['type'] = new Image();
+  images['type'].onload = function () {
+    draw(canvas, card);
+  };
+  // handle failure
+  images['type'].onerror = function(){
+
+  };
+  images['type'].src = kImagePath + 'templates/type_' + card['type'] + '.png';
+
+  // run... if loading will run again.
+  draw(canvas, card);
+}
+
+function draw(canvas, card) {
   if (canvas == null) {
-    console.log("CANVAS NULL");
+    console.log('CANVAS NULL');
     return;
   }
 
@@ -89,18 +116,23 @@ function redraw(canvas, card) {
   drawTemplate(ctx, images.artBorder);
   drawTemplate(ctx, images.verbTitle);
   drawTemplate(ctx, images.verbText);
+
+  var cardType = card['type'];
+  if (cardType !== null) {
+    drawTemplate(ctx, images.type);
+  }
   //
 
 
-  ctx.fillStyle = "black";
+  ctx.fillStyle = 'black';
 
   // loop through card data using index/property
   // which we use to determine the field
   for (var prop in card) {
     if (card.hasOwnProperty(prop)) {
 
-      if (prop === "name") {
-        textLine(ctx, card[prop], unit(1.2), unit(2.24),
+      if (prop === 'name') {
+        textLine(ctx, card[prop].toUpperCase(), unit(1.25), unit(2.23),
           kFontVerbTitle, 'center');
         continue;
       }
@@ -219,14 +251,14 @@ function sizeArt() {
   var frameW = unit(1.8);
   var frameH = unit(1.3);
 
-  //console.log("PHOTO FRAME: " + frameX + ", " + frameY + ", " + frameW + ", " + frameH);
+  //console.log('PHOTO FRAME: ' + frameX + ', ' + frameY + ', ' + frameW + ', ' + frameH);
   // 49, 96, 254, 183
 
   var frameRatio = frameW / frameH;
   var artRatio = artImage.width / artImage.height;
 
-  //console.log("PHOTO Src: " + artImage.width + ", " + artImage.height);
-  //console.log("frameRatio: " + frameRatio + "   artRatio: " + artRatio);
+  //console.log('PHOTO Src: ' + artImage.width + ', ' + artImage.height);
+  //console.log('frameRatio: ' + frameRatio + '   artRatio: ' + artRatio);
 
   if (artRatio > frameRatio) {
     // art image is wider
@@ -267,5 +299,5 @@ function saveCanvas(el, name) {
     el.download = name + '.png';
     //el.href = canvas.toDataURL('image/jpeg', 0.92);
     //el.download = name + '.jpg';
-  } catch (e) { alert(e + "\n\nCannot save when run from local file://") }
+  } catch (e) { alert(e + '\n\nCannot save when run from local file://') }
 }
