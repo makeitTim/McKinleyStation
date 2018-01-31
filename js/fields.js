@@ -16,6 +16,8 @@
  * 
  *   Fields are collected arrays grouped by card type.
  * 
+ *   Note, Card Type is not included here. It's hardcoded in index.html
+ *   and directly wired in.
  */
 
 /* ______________________________________________________________________
@@ -28,32 +30,14 @@ var fieldList = [];
 /// Fields the cards may have (closable x) indexed by type or all
 var fieldListOptional = [];
 
-fieldList['all'] = [ 'type', 'name', 'info' ];
+fieldList['all'] = [ 'name', 'info' ];
 fieldListOptional['all'] = [ 'icon1', 'icon2', 'icon3' ];
 
-fieldList['personnel'] = [ 'lore', 'skills' ];
+fieldList['personnel'] = [ 'property', 'lore', 'skills' ];
 fieldListOptional['personnel'] = [ 'personnelTemplate' ];
 
-fieldList['artifact'] = [ 'lore', 'gametext' ];
-fieldListOptional['artifact'] = [ 'template' ];
-
-// verbs with lore + gametext are all like artifact
-fieldList['dilemma'] = fieldList['artifact'];
-fieldListOptional['dilemma'] = fieldListOptional['artifact'];
-fieldList['doorway'] = fieldList['artifact'];
-fieldListOptional['doorway'] = fieldListOptional['artifact'];
-fieldList['equipment'] = fieldList['artifact'];
-fieldListOptional['equipment'] = fieldListOptional['artifact'];
-fieldList['event'] = fieldList['artifact'];
-fieldListOptional['event'] = fieldListOptional['artifact'];
-fieldList['interrupt'] = fieldList['artifact'];
-fieldListOptional['interrupt'] = fieldListOptional['artifact'];
-
-// indicent and object are the same too
-fieldList['incident'] = [ 'gametext' ];
-fieldListOptional['incident'] = []; // no optional fields?
-fieldList['objective'] = fieldList['incident'];
-fieldListOptional['objective'] = fieldListOptional['incident'];
+fieldList['verb'] = [ 'verbType', 'property', 'lore', 'gametext' ];
+fieldListOptional['verb'] = [ 'verbTemplate' ];
 
 /* ______________________________________________________________________
  * Field Definitions
@@ -76,30 +60,47 @@ function createDefaultField(index) {
 /// This array contains all the field definitions.
 var fields = [];
 
-/// Card type. The option values match the field lists above!
-fields['type'] = {
-  label: 'Card Type',
-  panel: 'SELECT',
-  options: [ 'artifact', 'dilemma_both', 'dilemma_planet', 'dilemma_space',
-            'doorway', 'equipment', 'event', 'incident',
-            'interrupt', 'objective' ],
-  default: 'artifact'
-};
-
-// verb template
-fields['template'] = {
-  label: 'Template',
-  panel: 'SELECT',
-  options: [ 'verb', 'verb_4lines', 'verb_5lines' ],
-  default: 'verb'
-};
-
 // Card Name. verbs and nouns are different, and it's fundamental enough
 // to just hardcode how it's drawn in the canvas code.
 fields['name'] = {
   label: 'Card Name',
   panel: 'TEXT'
 }
+
+// verb card types, verbs are grouped together
+fields['verbType'] = {
+  label: 'Verb Card Type',
+  panel: 'SELECT',
+  options: [
+    'artifact', 'dilemma_both', 'dilemma_planet', 'dilemma_space',
+    'doorway', 'equipment', 'event', 'incident', 'interrupt', 'objective'
+  ],
+  default: 'artifact',
+  render: 'IMG',
+  path: 'templates/type_'
+};
+
+// verb text box
+fields['verbTemplate'] = {
+  label: 'Template',
+  panel: 'SELECT',
+  options: [ 'verb', 'verb_full', 'verb_4lines', 'verb_5lines' ],
+  default: 'verb',
+  render: 'IMG',
+  path: 'templates/text_'
+};
+
+fields['property'] = {
+  label: 'Property',
+  panel: 'SELECT',
+  options: [
+    'tng', 'ds9', 'tos', 'voy', 'ds9', 'ent', 'starm', 'stccg',
+    'st01', 'st02', 'st03', 'st04', 'st05', 'st06', 'st07', 'st08', 'st09', 'st10',
+  ],
+  default: 'tng',
+  render: 'IMG',
+  path: 'property/'
+};
 
 fields['info'] = {
   label: 'Collecter\'s Info',
@@ -124,18 +125,18 @@ fields['icon3'] = {
 fields['lore'] = {
   label: 'Lore',
   panel: 'TEXTAREA',
-  font: kFontLore, line: kFontLoreLineHeight,
-  x: 0.41, y: 2.4, w: 1.73
+  font: kFontLore,
+  x: 0.41, y: 2.4, w: 1.73, line: kFontLoreLineHeight
 }
 fields['gametext'] = {
   label: 'Gametext',
   panel: 'TEXTAREA',
-  font: kFontGametext, line: kFontGametextLineHeight,
-  x: 0.41, y: 2.95, w: 1.73
+  font: kFontGametext,
+  x: 0.41, y: 2.95, w: 1.73, line: kFontGametextLineHeight
 }
 fields['skills'] = {
   label: 'Skills',
   panel: 'TEXTAREA',
-  font: kFontSkills, line: kFontSkillsLineHeight,
-  x: 0.39, y: 2.95, w: 1.75
+  font: kFontSkills,
+  x: 0.39, y: 2.95, w: 1.75, line: kFontSkillsLineHeight
 }

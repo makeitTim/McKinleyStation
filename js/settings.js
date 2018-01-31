@@ -23,6 +23,16 @@ const kCanvasPoint = kCanvasHeight / (3.5 * 72.0);
 
 const kImagePath = 'img/141/';
 
+
+// Size canvas to settings
+var can = document.querySelector('canvas');
+can.width = kCanvasWidth;
+can.height = kCanvasHeight;
+// set width if controls below canvas, just in case content wider
+var controls = document.getElementById('controls');
+controls.style.width = kCanvasWidth + 'px';
+
+
 /**
  * Converts inch units to current canvas PPI.
  * @param inch  unit in inches
@@ -57,3 +67,20 @@ const kFontSkills = fontPx(7) + 'px Skills';
 const kFontSkillsLineHeight = fontPx(8);
 
 const kFontInfo = fontPx(4.5) + 'px Gametext';
+
+
+// these helpers produces better vm code in JS engines due to their
+// explicitness and function inlining
+function isUndef (v) {
+  return v === undefined || v === null
+}
+function isDef (v) {
+  return v !== undefined && v !== null
+}
+function safeValue (v, def) {
+  if (v === undefined || v === null) {
+    return def
+  } else {
+    return v
+  }
+}

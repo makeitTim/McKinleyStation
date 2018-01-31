@@ -6,91 +6,29 @@
  *   |\  /| /    |/  | | \ | |   /__ \__|   (__   |  /_\  |   | /  \ |\ |
  *   | \/ | \__  | \ | |  \| |__ \__  __/   ___\  | /   \ |   | \__/ | \|
  *   
- *   Canvas functionality.
+ *   Canvas functionality. Art also managed here.
  */
-
-
-// example of vue and canvas
-// https://jsfiddle.net/mani04/r4mbh6nu/1/
-
-var can = document.querySelector('canvas');
-
-// can.width = can.offsetWidth;
-
-can.width = kCanvasWidth;
-can.height = kCanvasHeight;
-
-// set width if controls below canvas, just in case content wider
-var controls = document.getElementById('controls');
-controls.style.width = kCanvasWidth + 'px';
-
-
-/* ______________________________________________________________________
- * Image assets preloader
- */
-
-var images = {};
-var sources = {
-  bg: 'templates/bb.png',
-  bgNeutral: 'templates/bg_neutral.png',
-  border: 'templates/border.png',
-  artBorder: 'templates/border_art.png',
-  verbTitle: 'templates/title_verb.png',
-  verbText: 'templates/text_verb.png'
-};
-function loadImages(sources) {  // , callback) {
-  var loadedImages = 0;
-  var numImages = 0;
-  // get num of sources
-  for (var src in sources) {
-    numImages++;
-  }
-  for (var src in sources) {
-    images[src] = new Image();
-
-    images[src].onload = function () {
-      if (++loadedImages >= numImages) {
-        redraw(can);
-      }
-    };
-
-    // fixed 'tainted' error when saving, but moced CORS issue to here.
-    //images[src].crossOrigin = 'Anonymous';
-
-    images[src].src = kImagePath + sources[src];
-  }
-}
-loadImages(sources);
-
-
-//[].forEach.call(inp,function(inp){ inp.addEventListener('input', redraw, false) });
-
-/* ______________________________________________________________________
- * Redraw convas method
- */
-
- // http://fragged.org/preloading-images-using-javascript-the-right-way-and-without-frameworks_744.html
 
 function redraw(canvas, card) {
-  if (card === null) {
-    return;
-  }
+  if (isUndef(card)) { return }
 
-  if (card['type'] === null) {
+  if (isUndef(card['verbType'])) {
     draw(canvas, card);
     return;
   }
   // TODO: multiple image caching system
   // preload...
-  images['type'] = new Image();
-  images['type'].onload = function () {
+  images['verbType'] = new Image();
+  images['verbType'].onload = function () {
     draw(canvas, card);
   };
   // handle failure
-  images['type'].onerror = function(){
+  images['verbType'].onerror = function(){
 
   };
-  images['type'].src = kImagePath + 'templates/type_' + card['type'] + '.png';
+  var imageSrc = kImagePath + fields['verbType'].path + card['verbType'] + '.png';
+  console.log('****  imageSrc: ' + imageSrc);
+  images['verbType'].src = imageSrc;
 
   // run... if loading will run again.
   draw(canvas, card);
@@ -110,17 +48,25 @@ function draw(canvas, card) {
   //
   //fillTemplate(ctx)
   drawArt(ctx);
-  drawFull(ctx, images.bg);
-  drawTemplate(ctx, images.bgNeutral);
-  drawTemplate(ctx, images.border);
-  drawTemplate(ctx, images.artBorder);
-  drawTemplate(ctx, images.verbTitle);
-  drawTemplate(ctx, images.verbText);
+  drawImageFull(ctx, images.bg);
+  drawImage(ctx, images.border);
+  drawImage(ctx, images.artBorder);
 
   var cardType = card['type'];
-  if (cardType !== null) {
-    drawTemplate(ctx, images.type);
+
+  if (isDef(cardType)) {
+    if (cardType === 'verb') {
+      drawImage(ctx, images.bgNeutral);
+      drawImage(ctx, images.verbTitle);
+      drawImage(ctx, images.verbText);
+
+      var verbType = card['verbType'];
+      if (isDef(verbType)) {
+        drawImage(ctx, images.verbType);
+      }
+    }
   }
+
   //
 
 
@@ -157,18 +103,15 @@ function draw(canvas, card) {
 
 
 /**
- * Draws image over entire canvas
+ * Draws a field
  * @param ctx     Current context to draw with.
  * @param field   The field definition being drawn.
  * @param value   The value this card has, ie. text or image.
  */
 function drawField(ctx, field, value) {
-
-  var font = field.font;
-  if (font === null) { font = kFontGametext; }
-
-  var align = field.align;
-  if (align === null) { align = 'left'; }
+  if (isUndef(field)) { return }
+  var font = safeValue(field.font, kFontGametext);
+  var align = safeValue(field.align, 'left');
 
   if (field.w === null) {
     // no .w means just text
@@ -191,31 +134,29 @@ function drawField(ctx, field, value) {
  */
 
 /**
- * Draws image over entire canvas
- * @param ctx    Current context to draw with.
- * @param img    Image object to draw.
+ * Draws image over entire canvas.
+ * @param ctx     Current context to draw with.
+ * @param img     Image object to draw.
  */
-function drawFull(ctx, img) {
+function drawImageFull(ctx, img) {
   ctx.drawImage(img, 0, 0, kCanvasWidth, kCanvasHeight);
 }
 
 /**
- * Draws image inside a 0.11 inch margin
- * @param ctx    Current context to draw with.
- * @param img    Image object to draw.
+ * Draws image centered on point. If x,y aren't given it centers
+ * on the canvas.
+ * @param ctx     Current context to draw with.
+ * @param img     Image object to draw.
+ * @param x       Center point x to draw at, pixels.
+ * @param y       Center point y to draw at, pixels.
  */
-function drawTemplate(ctx, img) {
-  let m = unit(0.11);
-  ctx.drawImage(img, m, m);
-}
-
-/**
- * Fills template area with black rect, for verb cards.
- * @param ctx    Current context to draw with.
- */
-function fillTemplate(ctx) {
-  let m = unit(0.14); // margin little larger
-  ctx.fillRect(m, m, kCanvasWidth - (m * 2), kCanvasHeight - (m * 2));
+function drawImage(ctx, img, x, y) {
+  if (isUndef(img)) { return }
+  if (isUndef(x)) { x = kCanvasWidth / 2; }
+  if (isUndef(y)) { y = kCanvasHeight / 2; }
+  x -= img.width / 2;
+  y -= img.height / 2;
+  ctx.drawImage(img, x, y);
 }
 
 /* ______________________________________________________________________
