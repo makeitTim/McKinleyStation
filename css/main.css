@@ -10,7 +10,7 @@
  */
 
 canvas {
-  background: #fff;
+  background: #000;
   border-radius: 10px;
 }
 
@@ -93,7 +93,7 @@ canvas {
 .v-enter-active,
 .v-leave-active {
   /* transition: opacity 0.2s ease-out; */
-  transition: all 1.2s ease-out;
+  transition: all 0.6s ease-out;
   max-height: 500px;
 }
 

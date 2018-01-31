@@ -35,7 +35,7 @@
 
       <!-- Image -->
       <div class="image-wrapper">
-        <canvas id="#canvas" v-draw-card="card"></canvas>
+        <canvas id="#canvas" ref="canvas" v-draw-card="card"></canvas>
 
         <!-- Controls -->
         <div class="image-controls" id="controls">
@@ -57,21 +57,11 @@
         <div class="field">
           <label>Card Type</label>
           <select v-model="card['type']">
-            <option value="verb">Verb</option>
-            <option value="personnel">Personnel</option>
+            <option v-for="v in cardTypes" :value="v"> {{v}} </option>
           </select>
         </div>
 
-        <field-smart v-for="v in fields('all')" :key="v" :index="v" :x="false" v-model="card">
-        </field-smart>
-
-        <field-smart v-for="v in fields(card['type'])" :key="v" :index="v" :x="false" v-model="card">
-        </field-smart>
-
-        <field-smart v-for="v in optionals(card['type'])" :key="v" :index="v" :x="true" v-model="card">
-        </field-smart>
-
-        <field-smart v-for="v in optionals('all')" :key="v" :index="v" :x="true" v-model="card">
+        <field-smart v-for="v in panelFields" :key="v" :index="v" :x="false" v-model="card">
         </field-smart>
 
       </div>
@@ -92,6 +82,7 @@
   <!-- Settings -->
   <script src="js/settings.js"></script>
   <script src="js/fields.js"></script>
+  <script src="js/cardtypes.js"></script>
 
   <!-- Canvas -->
   <script src="js/canvas/text.js"></script>

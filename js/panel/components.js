@@ -55,9 +55,7 @@ Vue.component('field-text', {
     props: ['index', 'x', 'value'],
     computed: {
       field() {
-        var fieldDef = fields[this.index];
-        if (fieldDef === null) { fieldDef = createDefaultField(this.index); }
-        return fieldDef;
+        return fetchFieldDefinition(this.index);
       }
     },
     template: `

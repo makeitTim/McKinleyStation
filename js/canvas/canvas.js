@@ -9,125 +9,93 @@
  *   Canvas functionality. Art also managed here.
  */
 
-function redraw(canvas, card) {
+function cacheImagesAndDraw(canvas, card) {
+  if (isUndef(canvas)) { return }
   if (isUndef(card)) { return }
 
-  if (isUndef(card['verbType'])) {
+  imageLoadingDone = function () {
     draw(canvas, card);
-    return;
   }
-  // TODO: multiple image caching system
-  // preload...
-  images['verbType'] = new Image();
-  images['verbType'].onload = function () {
-    draw(canvas, card);
-  };
-  // handle failure
-  images['verbType'].onerror = function(){
 
-  };
-  var imageSrc = kImagePath + fields['verbType'].path + card['verbType'] + '.png';
-  console.log('****  imageSrc: ' + imageSrc);
-  images['verbType'].src = imageSrc;
-
-  // run... if loading will run again.
+  // draw
   draw(canvas, card);
 }
 
 function draw(canvas, card) {
-  if (canvas == null) {
-    console.log('CANVAS NULL');
-    return;
-  }
-
-  let can = canvas;
   let ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, kCanvasWidth, kCanvasHeight);
 
-  ctx.clearRect(0, 0, can.width, can.height);
-
-  //
-  //fillTemplate(ctx)
-  drawArt(ctx);
-  drawImageFull(ctx, images.bg);
-  drawImage(ctx, images.border);
-  drawImage(ctx, images.artBorder);
-
-  var cardType = card['type'];
-
-  if (isDef(cardType)) {
-    if (cardType === 'verb') {
-      drawImage(ctx, images.bgNeutral);
-      drawImage(ctx, images.verbTitle);
-      drawImage(ctx, images.verbText);
-
-      var verbType = card['verbType'];
-      if (isDef(verbType)) {
-        drawImage(ctx, images.verbType);
-      }
-    }
-  }
-
-  //
-
-
+  // all text is default black.
   ctx.fillStyle = 'black';
 
-  // loop through card data using index/property
-  // which we use to determine the field
-  for (var prop in card) {
-    if (card.hasOwnProperty(prop)) {
+  var cardType = safeValue(card['type'], 'event');
 
-      if (prop === 'name') {
-        textLine(ctx, card[prop].toUpperCase(), unit(1.25), unit(2.23),
-          kFontVerbTitle, 'center');
-        continue;
+  // draw the art, if exists.
+  drawArt(ctx);
+
+  // draw the black border. TODO: border options
+  drawImageFull(ctx, fetchImageFor('templates/bb'));
+
+  var renders = fetchDrawFor(cardType, card);
+
+  for (var i = 0, len = renders.length; i < len; i++) {
+    let render = renders[i];
+
+    if (render.hasOwnProperty('r')) {
+      // load corresponding value from card object, if exists
+      var value;
+      if (render.hasOwnProperty('prop')) {
+        value = card[render.prop];
       }
 
-      drawField(ctx, fields[prop], card[prop])
+      if (render.r === 'IMG') {
+        drawImageWithRender(ctx, render, value);
+
+      } else if (render.r === 'TEXT') {
+        drawTextWithRender(ctx, render, value);
+
+      } else if (render.r === 'FORMAT') {
+        drawFormattedTextWithRender(ctx, render, value);
+
+      }
     }
   }
 
-  /*
-  textLine(ctx, string, unit(1.2), unit(2.24),
-    kFontVerbTitle, 'center');
-
-  textFormatted(ctx, string, unit(0.37), unit(2.4), unit(1.8),
-    kFontLoreLineHeight, kFontLore);
-
-  textFormatted(ctx, string, unit(0.39), unit(2.95), unit(1.75),
-    kFontGametextLineHeight, kFontGametext);
-  */
-
 }
 
-
+/* ______________________________________________________________________
+ * Text Drawing Helpers
+ */
 
 /**
- * Draws a field
+ * Draws single line text with parameters from render.
  * @param ctx     Current context to draw with.
- * @param field   The field definition being drawn.
- * @param value   The value this card has, ie. text or image.
+ * @param render  Render drawing parameters
+ * @param value   Text to draw
  */
-function drawField(ctx, field, value) {
-  if (isUndef(field)) { return }
-  var font = safeValue(field.font, kFontGametext);
-  var align = safeValue(field.align, 'left');
+function drawTextWithRender(ctx, render, value) {
+  var font = safeValue(render.font, kFontGametext);
+  var align = safeValue(render.align, 'left');
 
-  if (field.w === null) {
-    // no .w means just text
-    textLine(ctx, value, unit(field.x), unit(field.y), font, align);
-
-  } else {
-    // has .w means it's a multiline formatted field.
-    var lineHeight = field.line;
-    if (lineHeight === null) { lineHeight = kFontGametextLineHeight; }
-
-    textFormatted(ctx, value, unit(field.x), unit(field.y),
-      unit(field.w), lineHeight, font, align);
-
-  }
-
+  textLine(ctx, value, unit(render.x), unit(render.y), font, align);
 }
+
+/**
+ * Draws multiline text using format with parameters from render.
+ * @param ctx     Current context to draw with.
+ * @param render  Render drawing parameters
+ * @param value   Text to draw
+ */
+function drawFormattedTextWithRender(ctx, render, value) {
+  var font = safeValue(render.font, kFontGametext);
+  var align = safeValue(render.align, 'left');
+  var lineHeight = safeValue(render.line, kFontGametextLineHeight);
+
+  textFormatted(ctx, value, unit(render.x), unit(render.y),
+      unit(render.w), lineHeight, font, align);
+}
+
+
 
 /* ______________________________________________________________________
  * Image Drawing Helpers
@@ -139,7 +107,29 @@ function drawField(ctx, field, value) {
  * @param img     Image object to draw.
  */
 function drawImageFull(ctx, img) {
+  if (isUndef(img)) { return }
   ctx.drawImage(img, 0, 0, kCanvasWidth, kCanvasHeight);
+}
+
+/**
+ * Uses below drawImage() method with parameters from render.
+ * @param ctx     Current context to draw with.
+ * @param render  Render drawing parameters
+ * @param value   Value if set, used to find image name
+ */
+function drawImageWithRender(ctx, render, value) {
+  var src = '';
+  if (render.hasOwnProperty('path')) {
+    src += render.path;
+  }
+  if (render.hasOwnProperty('img')) {
+    src += render.img;
+  } else {
+    if (isUndef(value)) { return }
+    src += value;
+  }
+
+  drawImage(ctx, fetchImageFor(src), render.x, render.y);
 }
 
 /**
@@ -147,21 +137,25 @@ function drawImageFull(ctx, img) {
  * on the canvas.
  * @param ctx     Current context to draw with.
  * @param img     Image object to draw.
- * @param x       Center point x to draw at, pixels.
- * @param y       Center point y to draw at, pixels.
+ * @param x       Center point x to draw at, in inches.
+ * @param y       Center point y to draw at, in inches.
  */
 function drawImage(ctx, img, x, y) {
   if (isUndef(img)) { return }
   if (isUndef(x)) { x = kCanvasWidth / 2; }
+  else { x = unit(x) }
   if (isUndef(y)) { y = kCanvasHeight / 2; }
+  else { y = unit(y) }
   x -= img.width / 2;
   y -= img.height / 2;
   ctx.drawImage(img, x, y);
 }
 
+
 /* ______________________________________________________________________
  * Art
  */
+
 var artImage = null;
 var artX = 0, artY = 0, artW = 0, artH = 0;
 function drawArt(context) {
@@ -169,7 +163,7 @@ function drawArt(context) {
   // TODO: aspect ratio and center ahead of time.
   context.drawImage(artImage, artX, artY, artW, artH);
 }
-function inputArt(input) {
+function inputArt(input, completion) {
   var reader = new FileReader();
   reader.onload = function (e) {
     artImage = new Image();
@@ -178,6 +172,7 @@ function inputArt(input) {
     // need to wait for image to load as well
     artImage.onload = function (e) {
       sizeArt();
+      if (isDef(completion)) { completion() }
     }
 
   }
@@ -240,5 +235,5 @@ function saveCanvas(el, name) {
     el.download = name + '.png';
     //el.href = canvas.toDataURL('image/jpeg', 0.92);
     //el.download = name + '.jpg';
-  } catch (e) { alert(e + '\n\nCannot save when run from local file://') }
+  } catch (e) { alert(e + '\n\nCannot save when run from local file://\nCORS. Could load images from web server or dev with cli/node.') }
 }

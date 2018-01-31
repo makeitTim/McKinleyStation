@@ -11,15 +11,23 @@
 
 var app = new Vue({
   el: '#app',
+  computed: {
+    cardTypes() {
+      return cardTypeList;
+    },
+    panelFields() {
+      return fetchPanelFor(this.card.type)
+    }
+  },
   methods: {
-    fields(type) {
-      return fieldList[type]
-    },
-    optionals(type) {
-      return fieldListOptional[type]
-    },
     input(event) {
-      inputArt(event.target);
+      var canvasRef = this.$refs.canvas;
+      var cardRef = this.card;
+      inputArt(event.target, function() {
+        // and redraw, TODO: is this the right way to call?
+        // I know there is a caching issue where onload doesn;t call if exists
+        cacheImagesAndDraw(canvasRef, cardRef);
+      });
     },
     save(event) {
       saveCanvas(event.target, 'test');
@@ -27,12 +35,11 @@ var app = new Vue({
   },
   data: {
     // -------
-    // Card data stored here, with initial values
+    // Card data stored here. Given initial values
     'card': {
-      'type': 'verb',
-      'verbType': 'event',
+      'type': 'event',
       'property': 'tng',
-      'name': 'Red Alert!',
+      'name': 'RED ALERT!',
       'info': 'DC',
       'lore': 'The state of maximum crew and systems readiness aboard starships.',
       'gametext': `Plays on table. In place of your normal card play, you may report
@@ -42,13 +49,15 @@ for duty any number of Ship, Personnel, and Equipment cards.`
   },
   directives: {
     drawCard: function (canvasElement, binding) {
-      redraw(canvasElement, binding.value);
+      cacheImagesAndDraw(canvasElement, binding.value);
     }
   },
-  //watch: {
-  //  card: function () {
-  //    console.log('Card data changed');
-  //  }
-  //}
+  watch: {
+    //card: function (newCard, oldCard) {
+      // console.log('Card data changed');
+      // TODO: when type has changed, reset data?
+      // or should type changes be events?
+    //}
+  }
 
 })
